@@ -62,7 +62,6 @@ void fazendo_vizinho_mais_proximo(Cidade *cidades, int dimens, int *rota){
 
 int main(){
   int dimens = 0;
-
   while (1){
 
   char palavra[50];
