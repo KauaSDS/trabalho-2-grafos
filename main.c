@@ -44,18 +44,16 @@ void fazendo_vizinho_mais_proximo(Cidade *cidades, int dimens, int *rota){
         }
       }
 
+    }
       cidadeAtual = id_mais_proximo;
       rota[cidadesVisitadas_count] = cidades[cidadeAtual].ID;
       visitadas[cidadeAtual] = 1;
 
       cidadesVisitadas_count ++;
-    }
-
-    free (visitadas);
-
-    
+   
     
   }
+  free (visitadas);
   
 
 }
@@ -82,23 +80,23 @@ int main(){
       break;
     }
   }
-  for(int i=0; i<=dimens; i++){
-    scanf("%d %lf %lf", cidades->ID, cidades->x, cidades->y);
+  for(int i=0; i<dimens; i++){
+    scanf("%d %lf %lf", &cidades[i].ID, &cidades[i].x, &cidades[i].y);
   }
 
   int *rota;
   rota = (int*) malloc(dimens * sizeof(int));
 
-  vizinho_mais_proximo(cidades, dimens, rota);
+  fazendo_vizinho_mais_proximo(cidades, dimens, rota);
 
   printf("NAME: ch150\n");
-  printf("TYPE: \n");
-  printf("DIMENSION: \n");
+  printf("TYPE: TOUR\n");
+  printf("DIMENSION: %d\n", dimens);
   printf("COMMENT: Kauã, Hitalecio, Leticia. Vizinho mais proximo\n");
 
   printf("TOTAL WEIGHT: ");
   int custo_total = 0;
-  for(int i=0; i<dimens; i++){
+  for(int i=0; i<dimens - 1; i++){
     int id_cidadeAtual = rota[i];
     int id_cidadePosterior = rota[i + 1];
 
@@ -109,18 +107,16 @@ int main(){
   }
   custo_total += calcular_distancia(cidades[rota[dimens - 1] - 1], cidades[rota[0] - 1]);
 
-  printf("%d", custo_total);
+  printf("%d\n", custo_total);
 
   printf("TOUR SECTION\n");
-  for(int i=0; i<dimens - 1; i++){
-    printf("%d\n, rota[i]");
+  for(int i=0; i<dimens; i++){
+    printf("%d\n", rota[i]);
   }
-  printf("EOF");
+  printf("\nEOF");
 
   free(cidades);
   free(rota);
-
-
 
 
 }
