@@ -14,7 +14,7 @@ int calcular_distancia(Cidade c1, Cidade c2){
   return floor( 0.5 + sqrt((((c1.x - c2.x) * (c1.x - c2.x)) + ((c1.y - c2.y) * (c1.y - c2.y)))));
 }
 
-void fazendo_vizinho_mais_proximo(Cidade *cidades, int dimens, int *rota){
+void fazendo_vizinho_mais_proximo(Cidade *cidades, int dimens, int *rota, int cidadeInicial){
   int *visitadas;
   visitadas = (int*) malloc(dimens * sizeof(int));
 
@@ -22,9 +22,9 @@ void fazendo_vizinho_mais_proximo(Cidade *cidades, int dimens, int *rota){
     visitadas[i] = 0;
   }
 
-  int cidadeAtual = 0;
+  int cidadeAtual = cidadeInicial;
 
-  rota[0] = cidades[cidadeAtual].ID;
+  rota[0] = cidades[cidadeInicial].ID;
 
   visitadas[cidadeAtual] = 1;
   int cidadesVisitadas_count = 1;
@@ -135,15 +135,38 @@ int main(){
   int *rota;
   rota = (int*) malloc(dimens * sizeof(int));
 
-  fazendo_vizinho_mais_proximo(cidades, dimens, rota);
+
+  int *rotaTemp;
+  rotaTemp = (int*) malloc(dimens * sizeof(int));
+
+  int melhorCustoGeral = -1;
+
+  for(int start=0; start < dimens; start++){
+    fazendo_vizinho_mais_proximo(cidades, dimens, rotaTemp, start);
+
+    int custoAtual = 0;
+    for(int i=0; i < dimens - 1; i++){
+      custoAtual += calcular_distancia(cidades[rotaTemp[i] - 1], cidades[rotaTemp[i + 1] - 1]);
+    }
+    custoAtual += calcular_distancia(cidades[rotaTemp[dimens - 1] - 1], cidades[rotaTemp[0] - 1]);
+
+    if(melhorCustoGeral == -1 || custoAtual < melhorCustoGeral){
+      melhorCustoGeral = custoAtual;
+
+      for(int m = 0; m<dimens; m++){
+        rota[m] = rotaTemp[m];
+      }
+    }
+  }
+  free(rotaTemp);
   otimizacao_2opt(cidades, dimens, rota);
 
   printf("NAME: ch150\n");
   printf("TYPE: TOUR\n");
   printf("DIMENSION: %d\n", dimens);
-  printf("COMMENT: Kauã, Hitalecio, Leticia. Vizinho mais proximo\n");
+  printf("COMMENT: Kauã, Hitalecio, Leticia. Multi-start Vizinho mais proximo e 2opt\n");
 
-  printf("TOTAL WEIGHT: ");
+  printf("TOTAL_WEIGHT: ");
   int custo_total = 0;
   for(int i=0; i<dimens - 1; i++){
     int id_cidadeAtual = rota[i];
