@@ -164,7 +164,7 @@ int main(){
   printf("NAME: ch150\n");
   printf("TYPE: TOUR\n");
   printf("DIMENSION: %d\n", dimens);
-  printf("COMMENT: Kauã, Hitalecio, Leticia. Multi-start Vizinho mais proximo e 2opt\n");
+  printf("COMMENT: Kaua, Hitalecio, Leticia. Multi-start Vizinho mais proximo e 2opt\n");
 
   printf("TOTAL_WEIGHT: ");
   int custo_total = 0;
