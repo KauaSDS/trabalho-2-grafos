@@ -43,7 +43,6 @@ void fazendo_vizinho_mais_proximo(Cidade *cidades, int dimens, int *rota){
           id_mais_proximo = i;
         }
       }
-
     }
       cidadeAtual = id_mais_proximo;
       rota[cidadesVisitadas_count] = cidades[cidadeAtual].ID;
@@ -54,8 +53,57 @@ void fazendo_vizinho_mais_proximo(Cidade *cidades, int dimens, int *rota){
     
   }
   free (visitadas);
-  
+}
 
+
+void otimizacao_2opt(Cidade *cidades, int dimens, int *rota){
+  int melhorou;
+  do{
+    melhorou = 0;
+
+  for(int i=1; i<dimens - 1; i++){
+    for(int j=i+1; j<dimens; j++){
+      int id_a = rota[i-1];
+      int id_b = rota[i];
+      int id_c = rota[j];
+     int id_d = rota[(j+1) % dimens];
+
+     Cidade cidA = cidades[id_a - 1];
+     Cidade cidB = cidades[id_b - 1];
+     
+     Cidade cidC = cidades[id_c - 1];
+     Cidade cidD = cidades[id_d - 1];
+
+     int distanciaAntiga = calcular_distancia(cidA, cidB) + calcular_distancia(cidC, cidD);
+     
+     int distanciaNova = calcular_distancia(cidA, cidC) + calcular_distancia(cidB, cidD);
+
+     int ehMelhor = distanciaNova - distanciaAntiga;
+
+
+
+     if(ehMelhor < 0){
+     int esquerda = i;
+     int direita = j;
+      while(esquerda < direita){
+        int temp = rota[esquerda];
+        rota[esquerda] = rota[direita];
+        rota[direita] = temp;
+
+        esquerda++;
+        direita--;
+      }
+        melhorou = 1;
+        break;
+    
+     }
+    }
+     if(melhorou){
+      break;
+     } 
+    
+  }
+  }while(melhorou ==1);
 }
 
 int main(){
@@ -64,7 +112,7 @@ int main(){
 
   char palavra[50];
     scanf("%s", palavra);
-    if (strcmp(palavra, "DIMENSION") == 0){
+    if (strcmp(palavra, "DIMENSION:") == 0){
       scanf("%d", &dimens);
       break;
     }
@@ -88,6 +136,7 @@ int main(){
   rota = (int*) malloc(dimens * sizeof(int));
 
   fazendo_vizinho_mais_proximo(cidades, dimens, rota);
+  otimizacao_2opt(cidades, dimens, rota);
 
   printf("NAME: ch150\n");
   printf("TYPE: TOUR\n");
@@ -105,15 +154,21 @@ int main(){
 
     custo_total += calcular_distancia(cidade_a, cidade_b);
   }
-  custo_total += calcular_distancia(cidades[rota[dimens - 1] - 1], cidades[rota[0] - 1]);
+  int id_ultimaCidade = rota[dimens - 1];
+  int id_primeiraCidade = rota[0];
+
+  Cidade ultima_Cidade = cidades[id_ultimaCidade - 1];
+  Cidade primeira_Cidade = cidades[id_primeiraCidade - 1];
+
+  custo_total += calcular_distancia(ultima_Cidade, primeira_Cidade);
 
   printf("%d\n", custo_total);
 
-  printf("TOUR SECTION\n");
+  printf("TOUR_SECTION\n");
   for(int i=0; i<dimens; i++){
     printf("%d\n", rota[i]);
   }
-  printf("\nEOF");
+  printf("EOF");
 
   free(cidades);
   free(rota);
